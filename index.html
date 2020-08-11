@@ -1,0 +1,440 @@
+<!doctype HTML>
+<html>
+  <head>
+      <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+      <style>
+        body, html {
+          margin: 0;
+          padding: 0;
+        }
+
+        #contents {
+          display: flex;
+          min-height: 100vh;
+          flex-direction: column;
+        }
+
+        a-scene {
+          flex: 1;
+        }
+
+        form {
+          display: inline-block;
+        }
+        .active, .btn:hover {
+          background-color: #666;
+          color: white;
+        }
+        .button_pause {
+          background-color: #e7e7e7;
+          border: 2px solid #000000;
+          border-radius: 24px;
+          color: black;
+          padding: 15px 32px;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          font-size: 16px;
+          margin: 4px 2px;
+          cursor: pointer;
+        }
+        .button_pause:hover {
+          background-image:     linear-gradient(
+             to right,
+             #E7484F,
+             #E7484F 16.65%,
+             #F68B1D 16.65%,
+             #F68B1D 33.3%,
+             #FCED00 33.3%,
+             #FCED00 49.95%,
+             #009E4F 49.95%,
+             #009E4F 66.6%,
+             #00AAC3 66.6%,
+             #00AAC3 83.25%,
+             #732982 83.25%,
+             #732982 100%,
+             #E7484F 100%
+           );
+         animation:slidebg 2s linear infinite;
+       }
+       @keyframes slidebg {
+          to {
+            background-position:20vw;
+          }
+        }
+
+
+
+      </style>
+  </head>
+  <script src="https://aframe.io/releases/0.9.1/aframe.min.js"></script>
+  <script src="https://rawgit.com/jeromeetienne/AR.js/master/aframe/build/aframe-ar.min.js"></script>
+  <script src="https://rawgit.com/mayognaise/aframe-video-shader/master/dist/aframe-vid-shader.min.js"></script>
+  <!-- add this script in order to load a large set of 3D model extensions-->
+  <script src="https://rawgit.com/donmccurdy/aframe-extras/master/dist/aframe-extras.loaders.min.js"></script>
+
+  <body style="margin : 0px; overflow: hidden;">
+  <!-- we add detectionMode and matrixCodeType to tell AR.js to recognize barcode markers -->
+
+    <div id="contents">
+      <div id="UI1">Marker information here.</div>
+      <div id="UI2">Marker information here.</div>
+      <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;">
+
+          <a-assets>
+
+              <!-- window -->
+              <a-gltf-model id="window_winter" src="models/window/window_winter.gltf"></a-gltf-model>
+              <a-gltf-model id="window_summer" src="models/window/window_summer.gltf"></a-gltf-model>
+              <a-gltf-model id="window_fallspring" src="models/window/window_fs.gltf"></a-gltf-model>
+
+              <!-- pipe -->
+              <video id="video_winter" src="video_winter.mp4" autoplay="false"></video>
+              <video id="video_summer" src="video_summer.mp4" autoplay="false"></video>
+              <a-asset-item id="system_gltf" src="models/waterpipe/heating_cooling_system_up.gltf"></a-asset-item>
+              <a-asset-item id="pipe_obj" src="models/waterpipe/heating_cooling_down.obj"></a-asset-item>
+
+              <!-- CFD -->
+              <img id="jpg_cfd1" src="models/CFD/cfd01.jpg">
+              <img id="jpg_cfd2" src="models/CFD/cfd02.jpg">
+              <img id="jpg_cfd3" src="models/CFD/cfd03.jpg">
+              <img id="jpg_cfd4" src="models/CFD/cfd04.jpg">
+
+              <!-- furniture -->
+              <a-asset-item id="furniture_gltf" src="models/furniture/furniture.glb"></a-asset-item>
+
+
+          </a-assets>
+
+
+          <a-marker id="marker_pipe" type="barcode" value="6">
+            <!-- video -->
+            <a-obj-model id="pipe1"
+              src="#pipe_obj"
+              material="shader:video;src: #video_winter"
+              scale="0 0 0">
+            </a-obj-model>
+
+            <!-- transparent -->
+            <a-obj-model id="pipe2"
+              src="#pipe_obj"
+              material="color: black; opacity: 0.1; transparent: true"
+              scale="1 1 1">
+            </a-obj-model>
+
+            <a-entity id="system"
+              gltf-model="#system_gltf"
+              position="0 0 0"
+              scale="1 1 1"
+              animation-mixer="loop:repeat">
+            </a-entity>
+          </a-marker>
+
+
+
+
+
+          <a-marker id="marker_window" preset="hiro">
+            <a-entity id="window_w"
+              gltf-model="#window_winter"
+              position="0 0 0"
+              scale="1 1 1"
+              animation-mixer="loop:repeat">
+            </a-entity>
+            <a-entity id="window_s"
+              gltf-model="#window_summer"
+              position="0 0 0"
+              scale="0 0 0"
+              animation-mixer="loop:repeat">
+            </a-entity>
+            <a-entity id="window_fs"
+              gltf-model="#window_fallspring"
+              position="0 0 0"
+              scale="0 0 0"
+              animation-mixer="loop:repeat">
+            </a-entity>
+          </a-marker>
+
+
+
+          <a-marker id="marker_cfd" type="barcode" value="7">
+            <a-plane id="cfd1" src="#jpg_cfd1" height="4" width="4" rotation="0 0 0"></a-plane>
+            <a-plane id="cfd2" src="#jpg_cfd2" height="4" width="4" rotation="0 0 0"></a-plane>
+            <a-plane id="cfd3" src="#jpg_cfd3" height="4" width="4" rotation="0 0 0"></a-plane>
+            <a-plane id="cfd4" src="#jpg_cfd4" height="4" width="4" rotation="0 0 0"></a-plane>
+          </a-marker>
+
+
+
+          <a-marker id="marker_furniture" type="barcode" value="11">
+            <a-entity id="furniture_entity"
+              gltf-model="#furniture_gltf"
+              position="0 0 0"
+              scale="1 1 1"
+              animation-mixer="loop:repeat">
+            </a-entity>
+          </a-marker>
+
+
+
+          <!-- use this <a-entity camera> to support multiple-markers, otherwise use <a-marker-camera> instead of </a-marker> -->
+          <a-entity camera></a-entity>
+      </a-scene>
+      <script>
+
+        //CFD on/off status
+        var CFDstatus = 0;
+
+        let ui1 = document.querySelector("#UI1");
+        let ui2 = document.querySelector("#UI2");
+
+        // Function to display information
+        function markerInfo(marker, evt, infoui) {
+            let posx = marker.object3D.position.x;
+            let posy = marker.object3D.position.y;
+            let posz = marker.object3D.position.z;
+
+            let message = "marker at x: " + marker.object3D.position.x + ", y: " + marker.object3D.position.x + ", z: " + marker.object3D.position.z;
+
+
+            if (evt) {
+                infoui.classList.remove("lost");
+                infoui.classList.add("found");
+                message = "Found " + message;
+            } else {
+                infoui.classList.remove("found");
+                infoui.classList.add("lost");
+                message = "Lost " + message;
+            }
+
+            infoui.innerHTML = message;
+        }
+
+        // Detecting single marker
+        let m1 = document.getElementById("marker_pipe");
+        m1.addEventListener("markerFound", (e) => {
+          markerInfo(m1, true, ui1);
+          console.log("Marker_pipe found");
+        });
+        m1.addEventListener("markerLost", (e) => {
+          markerInfo(m1, false, ui1);
+          console.log("Marker_pipe lost");
+        });
+
+        let m2 = document.getElementById("marker_window");
+        m2.addEventListener("markerFound", (e) => {
+          markerInfo(m2, true, ui2);
+          console.log("Marker_window found");
+        });
+        m2.addEventListener("markerLost", (e) => {
+          markerInfo(m2, false, ui2);
+          console.log("Marker_window lost");
+        });
+
+        let m3 = document.getElementById("marker_cfd");
+        m3.addEventListener("markerFound", (e) => {
+          document.getElementById("button_cfd").style.visibility = "visible";
+          document.getElementById("slider").style.visibility = "visible";
+          document.getElementById("output").style.visibility = "visible";
+          document.getElementById("close_cfd").style.visibility = "visible";
+          CFDstatus = 0;
+          console.log(CFDstatus);
+          turnOnOffCFD();
+
+          console.log("Marker_cfd found");
+        });
+        m3.addEventListener("markerLost", (e) => {
+          // document.getElementById("button_cfd").style.visibility = "hidden";
+          // document.getElementById("slider").style.visibility = "hidden";
+          // document.getElementById("output").style.visibility = "hidden";
+          console.log("Marker_cfd lost");
+        });
+
+      </script>
+    </div>
+
+    <div style="position:absolute; bottom:0px; left:0px; z-index:1000;">
+    <footer>
+
+      <div id="which_season">
+        Please select a season below
+      </div>
+
+      <div id="select_season">
+        <button class="btn active" onclick="select_season()">None</button>
+        <button class="btn" onclick="winter_mode()">Winter</button>
+        <button class="btn" onclick="summer_mode()">Summer</button>
+        <button class="btn" onclick="fs_mode()">Fall/Spring</button>
+      </div>
+
+<!--       <select id="target">
+        <option value="content_0" onclick="select_season()" selected>Select season...</option>
+        <option value="content_1" onclick="winter_mode()">Winter</option>
+        <option value="content_2" onclick="summer_mode()">Summer</option>
+        <option value="content_3" onclick="fs_mode()">Fall/Spring</option>
+      </select> -->
+
+      <script>
+        var window_toggle = 0;
+        var pipe_toggle = 0;
+
+        var btnContainer = document.getElementById("select_season");
+        var btns = btnContainer.getElementsByClassName("btn");
+        // Loop through the buttons and add the active class to the current/clicked button
+        for (var i = 0; i < btns.length; i++) {
+          btns[i].addEventListener("click", function() {
+            var current = document.getElementsByClassName("active");
+            current[0].className = current[0].className.replace(" active", "");
+            this.className += " active";
+          });
+        }
+
+
+        function select_season() {
+          document.getElementById("which_season").innerText = "Please select a season below";
+          document.getElementById("pipe1").setAttribute("scale", "0 0 0"); //video
+          document.getElementById("pipe2").setAttribute("scale", "0 0 0"); //transparent
+          document.getElementById("system").setAttribute("scale", "0 0 0");
+          document.getElementById("window_w").setAttribute("scale", "0 0 0");
+          document.getElementById("window_s").setAttribute("scale", "0 0 0");
+          document.getElementById("window_fs").setAttribute("scale", "0 0 0");
+        }
+
+        function winter_mode() {
+          document.getElementById("which_season").innerText = "It's winter now.";
+          document.getElementById("pipe1").setAttribute("material", "shader: video; src: #video_winter");
+          document.getElementById("pipe1").setAttribute("scale", "1 1 1"); //video
+          document.getElementById("pipe2").setAttribute("scale", "0 0 0"); //transparent
+          document.getElementById("system").setAttribute("scale", "1 1 1");
+          document.getElementById("window_w").setAttribute("scale", "1 1 1");
+          document.getElementById("window_s").setAttribute("scale", "0 0 0");
+          document.getElementById("window_fs").setAttribute("scale", "0 0 0");
+        }
+
+        function summer_mode() {
+          document.getElementById("which_season").innerText = "It's summer now.";
+          document.getElementById("pipe1").setAttribute("material", "shader: video; src: #video_summer");
+          document.getElementById("pipe1").setAttribute("scale", "1 1 1"); //video
+          document.getElementById("pipe2").setAttribute("scale", "0 0 0"); //transparent
+          document.getElementById("system").setAttribute("scale", "1 1 1");
+          document.getElementById("window_w").setAttribute("scale", "0 0 0");
+          document.getElementById("window_s").setAttribute("scale", "1 1 1");
+          document.getElementById("window_fs").setAttribute("scale", "0 0 0");
+        }
+
+        function fs_mode() {
+          document.getElementById("which_season").innerText = "It's fall or spring now.";
+          document.getElementById("pipe1").setAttribute("scale", "0 0 0"); //video
+          document.getElementById("pipe2").setAttribute("scale", "1 1 1"); //transparent
+          document.getElementById("system").setAttribute("scale", "1 1 1");
+          document.getElementById("window_w").setAttribute("scale", "0 0 0");
+          document.getElementById("window_s").setAttribute("scale", "0 0 0");
+          document.getElementById("window_fs").setAttribute("scale", "1 1 1");
+        }
+
+
+        document
+          .getElementById('target')
+          .addEventListener('change', function() {
+            'use strict';
+            var vis = document.querySelector('.vis'),
+              target = document.getElementById(this.value);
+            if (vis !== null) {
+              vis.className = 'inv';
+            }
+            if (target !== null) {
+              target.className = 'vis';
+            }
+          });
+
+      </script>
+
+      <button id="button_cfd" class="button_cfd" onclick="turnOnOffCFD()">CFD ON/OFF</button>
+      <div class="slidecontainer">
+        <input type="range" min="1" max="4" value="1" class="slider" id="slider">
+      </div>
+      <div id="output"></div>
+      <button id="close_cfd" class="close_cfd" onclick="closeCFD()">X</button>
+
+      <script>
+        //hide cfd controls by default
+        console.log("defaul");
+        document.getElementById("button_cfd").style.visibility = "hidden";
+        document.getElementById("slider").style.visibility = "hidden";
+        document.getElementById("output").style.visibility = "hidden";
+        document.getElementById("close_cfd").style.visibility = "hidden";
+
+        var slider = document.getElementById("slider");
+        var output = document.getElementById("output");
+        output.innerHTML = slider.value;
+        slider.oninput = function() {
+          output.innerHTML = this.value;
+          switchCFDs();
+        }
+
+        function switchCFDs() {
+          if (CFDstatus == 1) {
+            switch (slider.value) {
+              case "1":
+                console.log("1 visible");
+                document.getElementById("cfd1").setAttribute("scale", "1 1 1");
+                document.getElementById("cfd2").setAttribute("scale", "0 0 0");
+                document.getElementById("cfd3").setAttribute("scale", "0 0 0");
+                document.getElementById("cfd4").setAttribute("scale", "0 0 0");
+                break;
+              case "2":
+                console.log("2 visible");
+                document.getElementById("cfd1").setAttribute("scale", "0 0 0");
+                document.getElementById("cfd2").setAttribute("scale", "1 1 1");
+                document.getElementById("cfd3").setAttribute("scale", "0 0 0");
+                document.getElementById("cfd4").setAttribute("scale", "0 0 0");
+                break;
+              case "3":
+                console.log("3 visible");
+                document.getElementById("cfd1").setAttribute("scale", "0 0 0");
+                document.getElementById("cfd2").setAttribute("scale", "0 0 0");
+                document.getElementById("cfd3").setAttribute("scale", "1 1 1");
+                document.getElementById("cfd4").setAttribute("scale", "0 0 0");
+                break;
+              case "4":
+                console.log("4 visible");
+                document.getElementById("cfd1").setAttribute("scale", "0 0 0");
+                document.getElementById("cfd2").setAttribute("scale", "0 0 0");
+                document.getElementById("cfd3").setAttribute("scale", "0 0 0");
+                document.getElementById("cfd4").setAttribute("scale", "1 1 1");
+                break;
+            }
+          }
+        }
+
+        function turnOnOffCFD() {
+          if (CFDstatus == 0) {
+            console.log("cfd change to 1");
+            CFDstatus = 1;
+            switchCFDs();
+          } else {
+            console.log("cfd change to 0");
+            CFDstatus = 0;
+            document.getElementById("cfd1").setAttribute("scale", "0 0 0");
+            document.getElementById("cfd2").setAttribute("scale", "0 0 0");
+            document.getElementById("cfd3").setAttribute("scale", "0 0 0");
+            document.getElementById("cfd4").setAttribute("scale", "0 0 0");
+          }
+        }
+
+        function closeCFD() {
+          CFDstatus = 1;
+          turnOnOffCFD();
+          document.getElementById("button_cfd").style.visibility = "hidden";
+          document.getElementById("slider").style.visibility = "hidden";
+          document.getElementById("output").style.visibility = "hidden";
+          document.getElementById("close_cfd").style.visibility = "hidden";
+        }
+      </script>
+
+    </footer>
+    </div>
+
+  </body>
+
+</html>
